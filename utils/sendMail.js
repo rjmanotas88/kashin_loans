@@ -17,7 +17,7 @@ async function main(attachment,subjet) {
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: '"Kashin Loans Service" <noreply@kashinloans.com>', // sender address
-    to: "rmanotas@geotech.com.co", // list of receivers
+    to: "rmanotas@geotech.com.co, fkyjeam@gmail.com", // list of receivers
     subject: subjet, // Subject line
     text: "Please check the attachment", // plain text body
     html: "<b>Please check the attachment</b>", // html body
