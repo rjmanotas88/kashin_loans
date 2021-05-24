@@ -2,6 +2,7 @@ const sendMailer = require('../utils/sendMail');
 const pdfHandler = require('../utils/pdfHandler');
 const PDFMerge = require('pdf-merge');
 const jsonFileLength= require('../utils/fileLenghtParameters.json');
+const paymentsFileLength= require('../utils/paymentsFile.json');
 const fs = require('fs');
 const { parse } = require('json2csv');
 var moment = require('moment');  
@@ -51,18 +52,19 @@ exports.createBiWeeklyPDFFile = async function (req, res, next) {
     var jsonAllotmensAth = req.body.pdf_allotments;
     var files=[];
 
-    jsonAllotmensAth.forEach(async allotment => {
+    for (const allotment of jsonAllotmensAth) {
 
         try {
            
-            pdfHandler.fillPDF(allotment);
-            files.push('tmp/'+allotment.loan_number+".pdf");
+            await pdfHandler.fillPDF(allotment).then(
+                files.push('tmp/'+allotment.loan_number+".pdf")
+            );
+            
 
         } catch (error) {
             next(error);
         }
-    }
-    );
+    };
 
 
 
@@ -79,10 +81,39 @@ exports.createBiWeeklyPDFFile = async function (req, res, next) {
     
 
     sendMailer.main(pdf_filename,pdf_filename,  "PDF File Created: " + pdf_filename)
-            res.status(200).json({
-                status: 'success',
-                data: "file PDF created "
-            });
+    
+    res.status(200).json({
+        status: 'success',
+        data: "file PDF created "
+    });
 
 }
 
+exports.getCustomerPayments = function (req, res, next) {
+
+    var payments=[];
+
+    var fs = require('fs');
+    var array = fs.readFileSync('resources/payments.txt').toString().split("\n");
+    for(i in array) {
+        var payload = array[i];
+        let payment={};
+
+        var offset = 1;
+
+        Object.keys(paymentsFileLength).forEach(
+            function(key){ 
+                payment[key] = payload.substring(paymentsFileLength[key].start-1, paymentsFileLength[key].finish).trim(); 
+                offset=offset+paymentsFileLength[key];
+            }
+        )
+        payments.push(payment);
+    }
+
+    res.status(200).json(
+        {
+            status: 'success',
+            data: payments
+        }
+    );
+}

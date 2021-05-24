@@ -1,0 +1,19 @@
+{
+    "sec_num":{"start": 1, "finish": 10},
+    "company_name":{"start": 12, "finish": 61},
+    "company_num":{"start": 63, "finish": 72},
+    "store_num":{"start": 74, "finish": 76},
+    "contract_num":{"start": 78, "finish": 91},
+    "ssan":{"start": 93, "finish": 107},
+    "name":{"start": 109, "finish": 171},
+    "auth_amount":{"start": 173, "finish": 182},
+    "acc_number":{"start": 184, "finish": 200},
+    "amount_paid":{"start": 202, "finish": 211},
+    "trans_fee":{"start": 213, "finish": 222},
+    "amount_transf":{"start": 224, "finish": 233},
+    "process_fl":{"start": 235, "finish": 235},
+    "date_process":{"start": 237, "finish": 246},
+    "start_fl":{"start": 248, "finish": 257},
+    "stop_fl":{"start": 259, "finish": 268},
+    "msg_fl ":{"start": 270, "finish": 270}
+}
