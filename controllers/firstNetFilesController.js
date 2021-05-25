@@ -6,17 +6,17 @@ const paymentsFileLength= require('../utils/paymentsFile.json');
 const fs = require('fs');
 const { parse } = require('json2csv');
 var moment = require('moment');  
-const delimiter = "";
 const header=false;
 const quote ="";
-const opts = { delimiter, header,quote};
+
+
 
 
 exports.createSetupFile = function (req, res, next) {
     var date = new Date();
     var formattedDate = moment(date).format('YYYYMMDD');
     const logfile_name= "Kashin_BE"+formattedDate+".txt";
-    var superSecret = function(spy,model){
+    var fixLength = function(spy,model){
         Object.keys(spy).forEach(
             function(key){ 
                 spy[key] = spy[key].padEnd(model[key]," "); 
@@ -27,18 +27,20 @@ exports.createSetupFile = function (req, res, next) {
         //Require Json Object
         var jsonSetupFile =  req.body.clients; 
         jsonSetupFile.forEach(client => {
-            client = superSecret(client,jsonFileLength);
+            client = fixLength(client,jsonFileLength);
         });
 
         //Transform to fixed object
         //console.log(jsonSetupFile);
-        const tsv = parse(jsonSetupFile, opts).replace(/,/g,'');
-        fs.writeFileSync(logfile_name, tsv);
+        const delimiter = "";
+        const opts = { delimiter, header,quote};
+        const ssv = parse(jsonSetupFile, opts).replace(/,/g,'');
+        fs.writeFileSync(logfile_name, ssv);
         sendMailer.main(logfile_name,logfile_name,"FirstNet Setup File Example Kashin Loans");
         
         res.status(200).json({
             status: 'success',
-            data: "file created "+ logfile_name
+            message: "FirstNet Setup File "+ logfile_name
         });
 
 
@@ -84,7 +86,7 @@ exports.createBiWeeklyPDFFile = async function (req, res, next) {
     
     res.status(200).json({
         status: 'success',
-        data: "file PDF created "
+        message: "file PDF created: " +pdf_filename 
     });
 
 }
@@ -117,3 +119,32 @@ exports.getCustomerPayments = function (req, res, next) {
         }
     );
 }
+
+exports.createClarificationFIle = function (req, res, next) {
+    var date = new Date();
+    var formattedDate = moment(date).format('YYYYMMDD');
+    const logfile_name= "Kashin_CIP"+formattedDate+".txt";
+
+    try {
+        //Require Json Object
+        var jsonSetupFile =  req.body.clients; 
+
+        //Transform to fixed object
+        //console.log(jsonSetupFile);
+        const delimiter = "\t";
+        const opts = { delimiter, header,quote};
+        const tsv = parse(jsonSetupFile, opts);
+        fs.writeFileSync(logfile_name, tsv);
+        sendMailer.main(logfile_name,logfile_name,"FirstNet Clarification File Example Kashin Loans");
+        
+        res.status(200).json({
+            status: 'success',
+            message: "FirstNet Clarification File "+ logfile_name,
+            date:null,
+        });
+
+
+    } catch (error) {
+        next(error);
+    }
+};
