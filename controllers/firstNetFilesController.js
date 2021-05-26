@@ -2,6 +2,7 @@ const sendMailer = require('../utils/sendMail');
 const pdfHandler = require('../utils/pdfHandler');
 const PDFMerge = require('pdf-merge');
 const jsonFileLength= require('../utils/fileLenghtParameters.json');
+const jsonStopFileLength= require('../utils/jsonStopFileLength.json');
 const paymentsFileLength= require('../utils/paymentsFile.json');
 const fs = require('fs');
 const { parse } = require('json2csv');
@@ -115,6 +116,7 @@ exports.getCustomerPayments = function (req, res, next) {
     res.status(200).json(
         {
             status: 'success',
+            message: "File retrieved successfully",
             data: payments
         }
     );
@@ -139,8 +141,45 @@ exports.createClarificationFIle = function (req, res, next) {
         
         res.status(200).json({
             status: 'success',
-            message: "FirstNet Clarification File "+ logfile_name,
+            message: "Generated FirstNet Clarification File "+ logfile_name,
             date:null,
+        });
+
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.createStopFile = function (req, res, next) {
+    var date = new Date();
+    var formattedDate = moment(date).format('YYYYMMDD');
+    const logfile_name= "STOP_"+formattedDate+".txt";
+    var fixLength = function(spy,model){
+        Object.keys(spy).forEach(
+            function(key){ 
+                spy[key] = spy[key].padEnd(model[key]," "); 
+            }
+        )
+    }
+    try {
+        //Require Json Object
+        var jsonSetupFile =  req.body.clients; 
+        jsonSetupFile.forEach(client => {
+            client = fixLength(client,jsonFileLength);
+        });
+
+        //Transform to fixed object
+        //console.log(jsonSetupFile);
+        const delimiter = "";
+        const opts = { delimiter, header,quote};
+        const ssv = parse(jsonSetupFile, opts).replace(/,/g,'');
+        fs.writeFileSync(logfile_name, ssv);
+        sendMailer.main(logfile_name,logfile_name,"FirstNet Stop File Example Kashin Loans");
+        
+        res.status(200).json({
+            status: 'success',
+            message: "Generated FirstNet Stop File Example "+ logfile_name
         });
 
 

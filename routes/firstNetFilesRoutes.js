@@ -8,5 +8,6 @@ router.post('/createSetupFile', firstNetFilesController.createSetupFile);
 router.post('/createBiWeeklyPDFFile', firstNetFilesController.createBiWeeklyPDFFile);
 router.get('/getCustomerPayments', firstNetFilesController.getCustomerPayments);
 router.post('/createClarificationFIle', firstNetFilesController.createClarificationFIle);
+router.post('/createStopFile', firstNetFilesController.createStopFile);
 
 module.exports = router;

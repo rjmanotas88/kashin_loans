@@ -1,0 +1,21 @@
+{
+    "ssn":15,
+    "last_name":30,
+    "first_name":30,
+    "mi":1,
+    "street_address1":50,
+    "street_address2":50,
+    "city":30,
+    "state":2,
+    "zip_code":10,
+    "account_number":17,
+    "alt_account_number":17,
+    "account_status":1,
+    "company_number":8,
+    "store_number":3,
+    "contract_number":13,
+    "aut_allotment_paym_amount":11,
+    "allotment_start_date":10,
+    "date_of_birth":10,
+    "account_holder_email_address":100
+}
