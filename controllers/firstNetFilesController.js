@@ -1,5 +1,6 @@
 const sendMailer = require('../utils/sendMail');
 const pdfHandler = require('../utils/pdfHandler');
+const ftpHandler = require('../utils/ftp');
 const PDFMerge = require('pdf-merge');
 const jsonFileLength= require('../utils/fileLenghtParameters.json');
 const jsonStopFileLength= require('../utils/jsonStopFileLength.json');
@@ -96,30 +97,32 @@ exports.getCustomerPayments = function (req, res, next) {
 
     var payments=[];
 
-    var fs = require('fs');
-    var array = fs.readFileSync('resources/payments.txt').toString().split("\n");
-    for(i in array) {
-        var payload = array[i];
-        let payment={};
-
-        var offset = 1;
-
-        Object.keys(paymentsFileLength).forEach(
-            function(key){ 
-                payment[key] = payload.substring(paymentsFileLength[key].start-1, paymentsFileLength[key].finish).trim(); 
-                offset=offset+paymentsFileLength[key];
-            }
-        )
-        payments.push(payment);
-    }
-
-    res.status(200).json(
-        {
-            status: 'success',
-            message: "File retrieved successfully",
-            data: payments
+    ftpHandler.getPaymentFile('payments.txt',()=>{
+        var fs = require('fs');
+        var array = fs.readFileSync('payments.txt').toString().split("\n");
+        for(i in array) {
+            var payload = array[i];
+            let payment={};
+    
+            var offset = 1;
+    
+            Object.keys(paymentsFileLength).forEach(
+                function(key){ 
+                    payment[key] = payload.substring(paymentsFileLength[key].start-1, paymentsFileLength[key].finish).trim(); 
+                    offset=offset+paymentsFileLength[key];
+                }
+            )
+            payments.push(payment);
         }
-    );
+    
+        res.status(200).json(
+            {
+                status: 'success',
+                message: "File retrieved successfully",
+                data: payments
+            }
+        );
+    });
 }
 
 exports.createClarificationFIle = function (req, res, next) {
