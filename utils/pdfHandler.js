@@ -12,10 +12,14 @@ async function fillPDF(allotment) {
     const form = pdfDoc.getForm();
 
     //transform the data
-
+    let full_name= [allotment.last_name, allotment.first_name, allotment.middle_name].filter(Boolean).join(", ");
+    let full_name2= [ allotment.first_name, allotment.last_name,].filter(Boolean).join(" ");
+    let allotment_account_number= allotment.ssn.replace(/-/g, "")+'5676';
     allotment.total = "$"+allotment.total;
-    allotment.signature= "E-Sing by  "+ allotment.name +" on "+ allotment.date_signature;
-    allotment.account_number= allotment.account_number+'5676'
+    allotment.signature= "E-Sing by  "+ full_name2 +" on "+ allotment.date_signature;
+    allotment.agent_signature = "E-Sing by  "+ allotment.agent_name +" on "+ allotment.agent_signature_date;
+
+    
 
     //create vars for each form labael
     const name = form.getTextField('name');
@@ -33,13 +37,14 @@ async function fillPDF(allotment) {
     const agent_name = form.getTextField('agent_name');
     const loan_number = form.getTextField('loan_number');
     const total = form.getTextField('total');
+    const total2 = form.getTextField('total2');
     const account_number = form.getTextField('account_number');
     const signature = form.getTextField('signature');
     const date = form.getTextField('date');
     const email = form.getTextField('email');
 
     //set the form with data comming from json
-    name.setText(allotment.name);
+    name.setText(full_name);
     birthdate.setText(allotment.birthdate);
     ssn.setText(allotment.ssn);
     phone.setText(allotment.telephone);
@@ -54,7 +59,8 @@ async function fillPDF(allotment) {
     agent_name.setText(allotment.agent_name);
     loan_number.setText(allotment.loan_number);
     total.setText(allotment.total);
-    account_number.setText(allotment.account_number);
+    total2.setText(allotment.total);
+    account_number.setText(allotment_account_number);
     signature.setText(allotment.signature);
     date.setText(allotment.date_signature);
     email.setText(allotment.email);
