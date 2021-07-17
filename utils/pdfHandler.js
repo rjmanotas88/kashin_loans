@@ -12,12 +12,15 @@ async function fillPDF(allotment) {
     const form = pdfDoc.getForm();
 
     //transform the data
-    let full_name= [allotment.last_name, allotment.first_name, allotment.middle_name].filter(Boolean).join(", ");
-    let full_name2= [ allotment.first_name, allotment.last_name,].filter(Boolean).join(" ");
+    let middle_name_i= allotment.middle_name.charAt(0);
+    let full_name= [allotment.last_name, allotment.first_name, middle_name_i].filter(Boolean).join(", ");
+    let full_name2= [ allotment.first_name,middle_name_i ,allotment.last_name].filter(Boolean).join(" ");
+    let full_address = [ allotment.mailing_address,allotment.city ,allotment.state,allotment.zip_code].filter(Boolean).join("/");
     let allotment_account_number= allotment.ssn.replace(/-/g, "")+'5676';
+
     allotment.total = "$"+allotment.total;
-    allotment.signature= "E-Sing by  "+ full_name2 +" on "+ allotment.date_signature;
-    allotment.agent_signature = "E-Sing by  "+ allotment.agent_name +" on "+ allotment.agent_signature_date;
+    allotment.signature= "E-Signed by  "+ full_name2 +" on "+ allotment.date_signature;
+    allotment.agent_signature = "E-Signed by  "+ allotment.agent_name +" on "+ allotment.agent_signature_date;
 
     
 
@@ -48,8 +51,8 @@ async function fillPDF(allotment) {
     birthdate.setText(allotment.birthdate);
     ssn.setText(allotment.ssn);
     phone.setText(allotment.telephone);
-    mailing_address.setText(allotment.mailing_address);
-    physical_address.setText(allotment.physical_address);
+    mailing_address.setText(full_address);
+    physical_address.setText(full_address);
     issue_by.setText(allotment.issue_by);
     id_type.setText(allotment.id_type);
     id_number.setText(allotment.id_number);
